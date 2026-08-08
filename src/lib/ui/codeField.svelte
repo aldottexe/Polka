@@ -30,7 +30,7 @@
 >
     <label 
     for={id} 
-    class="block bg-g2 px-4 py-1 min-w-20 rounded-lg font-bold uppercase text-center relative"
+    class="block bg-g2 px-4 py-1 min-w-max w-19 rounded-lg font-bold uppercase text-center relative whitespace-nowrap"
     
     >{title}</label>
     <div class="flex gap-2" id={id} >

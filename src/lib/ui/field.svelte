@@ -44,7 +44,7 @@
     <label 
     for={id} 
     class="
-    block bg-g2 px-4 py-1 min-w-20 rounded-lg font-bold uppercase text-center relative
+    block bg-g2 px-4 py-1 w-22 rounded-lg font-bold uppercase text-center relative min-w-max
     {!overflowing ? 'before:opacity-0 after:opacity-0' : ''}
     after:[content:''] after:block after:absolute after:top-0 after:left-0 after:-right-2 after:-bottom-2 after:rounded-2xl after:bg-g0 after:-z-1
     before:[content:''] before:block before:absolute before:-right-2 before:-bottom-2 before:w-4 before:h-4 before:bg-g1 before:-z-2

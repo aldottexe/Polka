@@ -4,6 +4,7 @@
 	import CodeField from "$lib/ui/codeField.svelte";
 	import Field from "$lib/ui/field.svelte";
 
+	let {data} = $props();
    let code = $state("");
    let name = $state("");
    let color = $state("");
@@ -14,10 +15,21 @@
       parseInt(color) >= 0 &&
       parseInt(color) <= 8
    );
+
+   function joinRoom() {
+		// create new user
+		if (data.session) data.supabase.auth.signOut();
+		data.supabase.auth.signInAnonymously();
+
+		data.supabase.rpc("join_room", {player_name: name, player_color: color, room_code: code}).then((res) => {
+			if (res.error) console.error(res.error)
+			console.log(res);
+		});
+	}
 </script>
 
 <div class="flex flex-col w-full">
-   <div class="flex flex-col gap-2 w-full">
+   <div class="flex flex-col gap-3 w-full">
       <BackBar name="join room"/>
       <CodeField title="code" id="codefield" bind:value={code}/>
       <Field title="name" placeholder="adog" id="namefield" bind:value={name}/>
@@ -31,7 +43,7 @@
          class="overflow-hidden min-h-0 transition-all duration-300 ease-out"
          style="opacity: {canSubmit ? 1 : 0}; transform: scale({canSubmit ? 1 : 0.9})"
       >
-         <Arrowcta label="join" href="/join" active={canSubmit}/>
+         <Arrowcta label="join" onclick={()=>{}} active={canSubmit}/>
       </div>
    </div>
 </div>

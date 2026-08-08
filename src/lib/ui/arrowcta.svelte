@@ -1,8 +1,8 @@
 <script lang="ts">
-    let { label, href, active = true } : { label: string; href: string; active: boolean } = $props();
+    let { label, onclick, active = true } : { label: string; onclick:()=>void; active: boolean } = $props();
 </script>
-<a 
-    href={href}
+<button
+    onclick={onclick}
     class="flex rounded-lg px-6 py-4 {active ? 'bg-a2' : 'bg-g1'} w-full hover:bg-a1 hover:text-g0 transition-colors duration-100 uppercase text-g0 items-center gap-2"
 >
     <span>
@@ -20,4 +20,4 @@
     </svg>
             
     </div>
-</a>
+</button>
