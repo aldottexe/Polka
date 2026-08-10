@@ -50,7 +50,7 @@
          class="overflow-hidden min-h-0 transition-all duration-300 ease-out"
          style="opacity: {canSubmit ? 1 : 0}; transform: scale({canSubmit ? 1 : 0.9})"
       >
-         <Arrowcta label="create" onclick={createRoom} active={canSubmit}/>
+         <Arrowcta label="create" onclick={createRoom} active={canSubmit} visible={canSubmit}/>
       </div>
    </div>
 </div>

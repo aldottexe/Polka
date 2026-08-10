@@ -24,10 +24,13 @@
     <p class="text-red-800">logged out</p>
   {/if}
 </div>
-<div class="flex items-center justify-end h-screen flex-col max-w-150 mx-auto pb-20 px-20">
-<img src="/logo.svg" alt="logo" class="w-30 mb-3 self-start" />
-<div class="flex items-center flex-col gap-8 w-full">
-{@render children()}
+<div class="flex items-center justify-end h-screen flex-col max-w-150 mx-auto py-20 px-20">
+  <a href="/" class="self-start mb-2">
+    <img src="/logo.svg" alt="logo" class="w-25" />
+  </a>
+  {@render children()}
 </div>
 
-</div>
+<style>
+
+</style>
