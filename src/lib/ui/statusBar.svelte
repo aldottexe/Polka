@@ -1,7 +1,7 @@
 <script lang="ts">
     const {name, buttonLabel, onclick, icon} : {name: string, buttonLabel?: string, onclick?: () => void, icon?: string} = $props();
 </script>
-<div class="flex justify-between align-center uppercase w-full">
+<div class="flex justify-between align-center w-full px-1">
     <div class="flex">
         {#if icon}
             <img src={icon} alt={name} class="w-6 h-6 mr-2"/>

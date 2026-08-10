@@ -10,6 +10,6 @@
 	</p>
 
 <div class="flex w-full gap-2">
-	<LinkLG label="join" href="/join" />
-	<LinkLG label="create" href="/create" />
+	<LinkLG href="/join">join</LinkLG>
+	<LinkLG href="/create">create</LinkLG>
 </div>

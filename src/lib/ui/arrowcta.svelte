@@ -1,12 +1,14 @@
 <script lang="ts">
+    import type { Snippet } from "svelte";
+
     interface p {
-        label: string;
         onclick?: () => void;
         visible?: boolean;
         bgColor?: string;
         textColor?: string;
+        children: Snippet;
     }
-    let { label, onclick, visible = true, bgColor, textColor } : p = $props();
+    let { onclick, visible = true, bgColor, textColor, children } : p = $props();
 </script>
 
 <div 
@@ -22,7 +24,7 @@ style="grid-template-rows: {visible ? '1fr' : '0fr'};
             onclick={onclick}
             class="{bgColor || 'bg-a2'} {textColor || 'text-g0'}"
         >
-            <span>{label}</span>
+            <span>{@render children()}</span>
             <div class="arrow">
                 <svg class="w-full h-5">
                     <line x1="5px" y1="50%" x2="calc(100% - 5px)" y2="50%" class="stroke-2 stroke-g0" stroke-linecap="round"></line>

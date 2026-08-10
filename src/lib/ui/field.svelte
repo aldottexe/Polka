@@ -7,8 +7,9 @@
         placeholder: string
         value: string
         id: string
+        errorMsg?: string
     }
-    let {placeholder, value = $bindable(""), title, id} : p = $props();
+    let {placeholder, value = $bindable(""), title, id, errorMsg} : p = $props();
     let labelHeight:number = $state(0)
     let labelWidth:number = $state(0)
     let inputHeight:number = $state(0)
@@ -41,30 +42,31 @@
 
 
 <div class="flex gap-2 relative w-full items-start">
+    {#if errorMsg}
+        <span class="text-a3 absolute -top-3 -right-1 z-5 rotate-10 text-2xl font-bold">*</span>
+    {/if}
+
     <label 
     for={id} 
     class="
-    block bg-g2 px-4 py-1 w-22 rounded-lg font-bold uppercase text-center relative min-w-max
     {!overflowing ? 'before:opacity-0 after:opacity-0' : ''}
-    after:[content:''] after:block after:absolute after:top-0 after:left-0 after:-right-2 after:-bottom-2 after:rounded-2xl after:bg-g0 after:-z-1
-    before:[content:''] before:block before:absolute before:-right-2 before:-bottom-2 before:w-4 before:h-4 before:bg-g1 before:-z-2
-    before:transition-opacity before:duration-300 before:ease-in-out
-    after:transition-opacity after:duration-300 after:ease-in-out
     " 
     bind:clientHeight={labelHeight}
     bind:clientWidth={labelWidth}
 
-    >{title}</label>
+    >
+    {title}
+
+
+    </label>
 
     <!-- input -->
     <div 
     id={id} 
-    class="block z-3 bg-g1 px-6 {overflowing? 'py-3' : 'py-1'} 
-    rounded-lg absolute transition-all duration-300 ease-in-out 
-    focus:outline-none overflow-hidden right-0 bottom-0 whitespace-nowrap
-    before:absolute before:h-full before:content-(--placeholder)
-    
-    {value.length > 0 ? "before:opacity-0" : "before:opacity-50 before:transition-opacity"}"
+    class="input 
+    {overflowing? 'py-3' : 'py-1'} 
+    {value.length > 0 ? "before:opacity-0" : "before:opacity-50 before:transition-opacity"}
+    "
     contenteditable=true
     role="textbox"
     tabindex=0
@@ -80,3 +82,70 @@
         style="height:{overflowing ? inputHeight + labelHeight + 8 : 0}px">
     </div>
 </div>
+{#if errorMsg}
+<p class="text-a3 text-sm px-5">^^ {errorMsg}</p>
+{/if}
+<style>
+    label {
+        position: relative;
+        display: block;
+        padding: 0.25rem 1rem;
+        
+        min-width: max-content;
+        width: 5.5rem;
+        
+        border-radius: var(--radius-lg);
+
+        background-color: var(--color-g2);
+
+        font-weight: bold;
+        text-transform: uppercase;
+        text-align: center;
+    }
+    label::before, label::after {
+        content: '';
+        display: block;
+        position: absolute;
+        transition: opacity 300ms ease-in-out;
+    }
+    label::before {
+        bottom: -0.5rem;
+        right: -0.5rem;
+        width: 1rem;
+        height: 1rem;
+        background-color: var(--g1);
+        z-index: -2;
+    }
+    label::after {
+        top: 0;
+        left: 0;
+        right: -0.5rem;
+        bottom: -0.5rem;
+        z-index: -1;
+        border-radius: var(--radius-2xl);
+        background-color: var(--color-g0);
+    }
+    .input {
+        display: block;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        z-index: 3;
+
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        border-radius: var(--radius-lg);
+
+        overflow: hidden;
+        white-space: nowrap;
+
+        background-color: var(--color-g1);
+
+        transition: all 300ms ease-in-out;
+    }
+    .input::before {
+        content: var(--placeholder);
+        position: absolute;
+        height: 100%;
+    }
+</style>

@@ -39,8 +39,8 @@ async function joinRoom() {
    <div class="column gap-3">
       <BackBar name="join room"/>
       <CodeField title="code" id="codefield" bind:value={code}/>
-      <Field title="name" placeholder="Einstein" id="namefield" bind:value={name}/>
+      <Field title="name" placeholder="Einstein" id="namefield" bind:value={name} errorMsg="don't like that name"/>
       <Field title="color" placeholder="0" id="colorfield" bind:value={color}/>
    </div>
-   <Arrowcta label="join" onclick={joinRoom} active={canSubmit} visible={canSubmit}/>
+   <Arrowcta onclick={joinRoom} visible={canSubmit}>join</Arrowcta>
 </div>
