@@ -1,7 +1,5 @@
 <script lang="ts">
-	import ButtonLG from "$lib/ui/buttonLG.svelte";
 	import LinkLG from "$lib/ui/linkLG.svelte";
-	import LlinkLG from "$lib/ui/linkLG.svelte";
 	const {data} = $props()
 </script>
 

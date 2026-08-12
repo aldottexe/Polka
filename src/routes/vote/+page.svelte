@@ -13,6 +13,7 @@
     let room: any = $state({})
     let userData = $derived(playerList.find(p => p.auth_id === data.session?.user.id) || {})
     let remainingEntries = $derived(room.max_entries_per_player - entryList.filter(e => e.owner === userData.auth_id).length)
+    let showAddScreen = $state(false);
     
     let selectedTab = $state(0);
 
@@ -111,7 +112,7 @@
         <ButtonSM onclick={() => console.log("ready")} bgColor="bg-a2" textColor="text-g0">Ready</ButtonSM>
     </div>
     <!-- New Entry -->
-    <ButtonLG onclick={() => selectedTab = 0} bgColor="bg-g4" textColor="text-g0">New Entry +</ButtonLG>
+    <ButtonLG onclick={() => showAddScreen = true} bgColor="bg-g4" textColor="text-g0">New Entry +</ButtonLG>
 {/snippet}
 
 <PopupFull visible={true}>
