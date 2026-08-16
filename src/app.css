@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
 @import 'tailwindcss';
 
 :root {
@@ -36,8 +36,8 @@
 body {
    background-color: var(--color-g0);
    color: var(--color-g4);
-   font-family: "Roboto Mono", monospace;
-   font-size: 16px;
+   font-family: "Source Sans 3", sans-serif;
+   font-size: 18px;
 }
 
 .column {
