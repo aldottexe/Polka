@@ -1,34 +1,37 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import { slide } from "svelte/transition";
+	import { stopPropagation } from "svelte/legacy";
+	import { fly, slide } from "svelte/transition";
 
-    let {visible, children} : {visible: boolean, children: Snippet} = $props()
+    let {visible = $bindable(false), children} : {visible: boolean, children: Snippet} = $props()
 </script>
 
-<div class="popupContainer">
-    {#if visible}
-    <div class="card" transition:slide>
-        {@render children()}
-    </div>
-    {/if}
-</div>
+{#if visible}
+   <div class="popupContainer" onclick={()=>visible = false} transition:fly={{y: 100, duration: 200}}>
+      <div class="card" onclick={e => e.stopPropagation()} role="none">
+         {@render children()}
+      </div>
+   </div>
+{/if}
 
 <style>
     .popupContainer {
         width: 100vw;
+        max-width: 600px;
         height: 100vh;
         position:fixed;
         display: flex;
         flex-direction: column;
-        justify-content: flex-end;
+        justify-content: center;
         box-sizing:border-box;
-        padding: 10px;
+        padding: 10px 60px;
     }
     .card {
         box-sizing: border-box;
-        padding: 20px;
-        border-radius: 16px;
+        padding: 20px 40px;
+        border-radius: 26px;
         background-color: var(--color-g0);
-        box-shadow: 2px 2px 10px var(--color-g4);
+        /* box-shadow: 2px 2px 10px var(--color-g4); */
+        border: 10px var(--color-a4) solid;
     }
 </style>

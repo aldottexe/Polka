@@ -1,120 +1,118 @@
 <script lang="ts">
-	import Arrowcta from '$lib/ui/arrowcta.svelte';
-	import ButtonLG from '$lib/ui/buttonLG.svelte';
-	import ButtonSM from '$lib/ui/buttonSM.svelte';
-	import PopupFull from '$lib/ui/popupFull.svelte';
+	import Joining from '$lib/gameStates/joining.svelte';
+	import Voting from '$lib/gameStates/voting.svelte';
+	import Results from '$lib/gameStates/results.svelte';
 	import StatusBar from '$lib/ui/statusBar.svelte';
-	import Tabs from '$lib/ui/tabs.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, type Component, type ComponentProps } from 'svelte';
+	import type { Tables } from '../../../database.types.js';
 
-    const {data} = $props();
-    let playerList: any[] = $state([])
-    let entryList: any[] = $state([])
-    let room: any = $state({})
-    let userData = $derived(playerList.find(p => p.auth_id === data.session?.user.id) || {})
-    let remainingEntries = $derived(room.max_entries_per_player - entryList.filter(e => e.owner === userData.auth_id).length)
-    let showAddScreen = $state(false);
-    
-    let selectedTab = $state(0);
+	const { data } = $props();
+	let playerList: Tables<'players'>[] = $state([]);
+	let entryList: Tables<'entries'>[] = $state([]);
+	let room: Tables<'rooms'> | undefined = $state();
+	let userData: Tables<'players'> | undefined = $derived(
+		playerList.find((p) => p.auth_id === data.session?.user.id)
+	);
 
-    const tabs = [
-        {name: 'players', el: players},
-        {name: 'entries', el: entries},
-        ];
+	type roomState_T<C extends Component<any, {}, ''>> = {
+		c: C;
+		a: ComponentProps<C>;
+	};
+	type roomStates_T = {
+		joining: roomState_T<typeof Joining>;
+		voting: roomState_T<typeof Voting>;
+		results: roomState_T<typeof Results>;
+	};
 
-    onMount(() => {
-        const supabase = data?.supabase;
-        if (!supabase) return;
+	let roomStates: roomStates_T = $derived({
+		joining: {
+			c: Joining,
+			a: {
+				entryList: entryList,
+				room: room,
+				userData: userData,
+				playerList: playerList,
+				supabase: data.supabase
+			}
+		},
+		voting: {
+			c: Voting,
+			a: {
+				entries: entryList,
+				supabase: data.supabase
+			}
+		},
+		results: {
+			c: Results,
+			a: {
+				entries: entryList
+			}
+		}
+	});
 
-        console.log(data.session)
+	let CurrentRoomState = $derived(
+		room?.state ? roomStates[room.state as keyof roomStates_T] : undefined
+	);
+	let CurrentComponent = $derived(CurrentRoomState?.c);
+	let CurrentProps = $derived(CurrentRoomState?.a ?? {});
 
-        const channel = supabase
-            .channel('voting')
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'players' },
-                getPlayers
-            )
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'entries' },
-                getEntries
-            )
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'rooms' },
-                (payload) => {
-                    room = payload.new ?? {};
-                }
-            )
-            .subscribe();
+	onMount(() => {
+		const supabase = data?.supabase;
+		if (!supabase) return;
 
-        getPlayers();
-        getEntries();
-        getRoom();
+		const channel = supabase
+			.channel('voting')
+			.on('postgres_changes', { event: '*', schema: 'public', table: 'players' }, getPlayers)
+			.on('postgres_changes', { event: '*', schema: 'public', table: 'entries' }, getEntries)
+			.on('postgres_changes', { event: '*', schema: 'public', table: 'rooms' }, (payload) => {
+				room = payload.new as Tables<'rooms'>;
+			})
+			.subscribe();
 
-        return () => {
-            channel.unsubscribe();
-        };
-    });
+		getPlayers();
+		getEntries();
+		getRoom();
 
-    async function getEntries() {
-        const {data: entryData, error} = await data.supabase.from("entries").select("*")
-            if(error) return console.error(error)
-            entryList = entryData;
-    }
+		return () => {
+			channel.unsubscribe();
+		};
+	});
 
-    async function getPlayers() {
-        const {data: playerData, error} = await data.supabase.from("players").select("*")
-            if(error) return console.error(error)
-            playerList = playerData;
-    }
+	async function getEntries() {
+		const { data: entryData, error } = await data.supabase.from('entries').select('*');
+		if (error) return console.error(error);
+		entryList = entryData;
+	}
 
-    async function getRoom() {
-        const { data: roomData, error } = await data.supabase.from('rooms').select('*').single();
-        if (error) {
-            console.error(error);
-            room = {};
-            return;
-        }
-        room = roomData ?? {};
-    }
+	async function getPlayers() {
+		const { data: playerData, error } = await data.supabase.from('players').select('*');
+		if (error) return console.error(error);
+		playerList = playerData;
+	}
 
-   
-
+	async function getRoom() {
+		const { data: roomData, error } = await data.supabase.from('rooms').select('*').single();
+		if (error) {
+			console.error(error);
+			room = undefined;
+			return;
+		}
+		room = roomData ?? {};
+	}
 </script>
+
 <!-- Room/Player Info -->
-<StatusBar name={room.name || 'loading...'} buttonLabel="BACK" onclick={() => console.log("back")} />
-<StatusBar name={userData.name || 'loading...'} buttonLabel="edit" onclick={() => console.log("edit")} />
+<StatusBar
+	name={room?.name || 'loading...'}
+	buttonLabel="BACK"
+	onclick={() => console.log('back')}
+/>
+<StatusBar
+	name={userData?.name || 'loading...'}
+	buttonLabel="edit"
+	onclick={() => console.log('edit')}
+/>
 
-<Tabs tabs={tabs} bind:selectedIndex={selectedTab}/>
-
-<!-- Player Tab -->
-{#snippet players()}
-    <ul class="grow">
-        {#each playerList as player}
-            <li>{player.name}{player.id === room.owner ? " (Host)" : ""}</li>
-        {/each}
-    </ul>
-    <Arrowcta onclick={() => selectedTab = 1} bgColor="bg-g4">View Entries</Arrowcta>
-{/snippet}
-
-<!-- Entry Tab -->
-{#snippet entries()}
-    <ul class="grow">
-        {#each entryList as entry}
-            <li>{entry.name}</li>
-        {/each}
-    </ul>
-    <!-- Remaining votes & Ready Button -->
-    <div class="flex justify-between items-center my-2">
-        <p class="px-2">{remainingEntries}/{room.max_entries_per_player} LEFT</p> 
-        <ButtonSM onclick={() => console.log("ready")} bgColor="bg-a2" textColor="text-g0">Ready</ButtonSM>
-    </div>
-    <!-- New Entry -->
-    <ButtonLG onclick={() => showAddScreen = true} bgColor="bg-g4" textColor="text-g0">New Entry +</ButtonLG>
-{/snippet}
-
-<PopupFull visible={true}>
-    <h1>new entry</h1>
-</PopupFull>
+{#if CurrentComponent}
+	<CurrentComponent {...CurrentProps} />
+{/if}

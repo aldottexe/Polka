@@ -2,46 +2,46 @@
 @import 'tailwindcss';
 
 :root {
-   --g0: #EDEDED;
-   --g1: #E5E5E5;
-   --g2: #DCDCDC;
-   --g3: #51565C;
-   --g4: #272B2E;
-   --g450: #272b2e80;
-   --a1: #3B75D9;
-   --a2: #57AF63;
-   --a3: #CE6B87;
-   --a4: #E67E59;
-   --a5: #C7C734;
-   --a6: #9371D7;
-   --a7: #5CAAB3;
+	--g0: #ededed;
+	--g1: #e5e5e5;
+	--g2: #dcdcdc;
+	--g3: #51565c;
+	--g4: #272b2e;
+	--g450: #272b2e80;
+	--a1: #3b75d9;
+	--a2: #57af63;
+	--a3: #ce6b87;
+	--a4: #e67e59;
+	--a5: #c7c734;
+	--a6: #9371d7;
+	--a7: #5caab3;
 }
 
 @theme {
-   --color-g0: var(--g0);
-   --color-g1: var(--g1);
-   --color-g2: var(--g2);
-   --color-g3: var(--g3);
-   --color-g4: var(--g4);
-   --color-g450: var(--g450);
-   --color-a1: var(--a1);
-   --color-a2: var(--a2);
-   --color-a3: var(--a3);
-   --color-a4: var(--a4);
-   --color-a5: var(--a5);
-   --color-a6: var(--a6);
-   --color-a7: var(--a7);
+	--color-g0: var(--g0);
+	--color-g1: var(--g1);
+	--color-g2: var(--g2);
+	--color-g3: var(--g3);
+	--color-g4: var(--g4);
+	--color-g450: var(--g450);
+	--color-a1: var(--a1);
+	--color-a2: var(--a2);
+	--color-a3: var(--a3);
+	--color-a4: var(--a4);
+	--color-a5: var(--a5);
+	--color-a6: var(--a6);
+	--color-a7: var(--a7);
 }
 
 body {
-   background-color: var(--color-g0);
-   color: var(--color-g4);
-   font-family: "Source Sans 3", sans-serif;
-   font-size: 18px;
+	background-color: var(--color-g0);
+	color: var(--color-g4);
+	font-family: 'Source Sans 3', sans-serif;
+	font-size: 18px;
 }
 
 .column {
-   display: flex;
-   flex-direction: column;
-   width: 100%;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
 }

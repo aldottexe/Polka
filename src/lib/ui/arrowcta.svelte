@@ -6,15 +6,16 @@
         visible?: boolean;
         bgColor?: string;
         textColor?: string;
+        extraSpacing?: boolean;
         children: Snippet;
     }
-    let { onclick, visible = true, bgColor, textColor, children } : p = $props();
+    let { onclick, visible = true, bgColor, textColor, children, extraSpacing = true} : p = $props();
 </script>
 
 <div 
 class="ctaContainer"
 style="grid-template-rows: {visible ? '1fr' : '0fr'}; 
-       margin-top: {visible ? '2rem' : '0'}"
+       margin-top: {visible && extraSpacing ? '2rem' : '0'}"
 >
     <div
     style="opacity: {visible ? 1 : 0}; 
@@ -30,7 +31,16 @@ style="grid-template-rows: {visible ? '1fr' : '0fr'};
                     <line x1="5px" y1="50%" x2="calc(100% - 5px)" y2="50%" class="stroke-2 stroke-g0" stroke-linecap="round"></line>
                 </svg>
                 <svg viewBox="0 0 12 20" class="w-5 h-5 absolute -right-1">
-                    <polyLine points="2,4 8,10 2,16" x="calc(100% - 5px)" y="5px" class="stroke-2 stroke-g0" fill="none" stroke-linecap="round" stroke-linejoin="round"></polyLine>
+                    <polyLine 
+                      points="2,4 8,10 2,16" 
+                      x="calc(100% - 5px)" 
+                      y="5px" 
+                      class="stroke-2 stroke-g0" 
+                      fill="none" 
+                      stroke-linecap="round" 
+                      stroke-linejoin="round"
+                     >
+                     </polyLine>
                 </svg>
             </div>
         </button>
