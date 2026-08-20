@@ -47,10 +47,9 @@
       };
    }
 
+   // main step function
    function simulate(bodies: body_T[]) {
 
-      
-      
       bodies.forEach((b) => simulatePressure(b));
       
       const points = bodies.flatMap((body) => body.nodes);
@@ -116,87 +115,68 @@
       });
    }
 
-   function fixIntersections(bodies: body_T[]) {
-      const maxIterations = 20;
 
-      for (let iteration = 0; iteration < maxIterations; iteration++) {
-         let fixedIntersection = false;
+   // i need intersecting vertices and their closest edges so that i can fix them.
+   // i loop through each combination of objects.
+   // for each point in object a, i loop through all edges in object b
+   // if the point intersects the object, return the point's closest edge
 
-         for (let i = 0; i < bodies.length; i++) {
-            for (let j = i + 1; j < bodies.length; j++) {
-               const bodyA = bodies[i];
-               const bodyB = bodies[j];
-
-               if (!bodiesIntersecting(bodyA, bodyB)) continue;
-
-               const centerA = bodyCenter(bodyA);
-               const centerB = bodyCenter(bodyB);
-
-               let dx = centerA.x - centerB.x;
-               let dy = centerA.y - centerB.y;
-               const distance = Math.hypot(dx, dy);
-
-               if (distance === 0) {
-                  dx = 1;
-                  dy = 0;
-               } else {
-                  dx /= distance;
-                  dy /= distance;
-               }
-
-               const separation = 0.5;
-
-               bodyA.nodes.forEach((node) => {
-                  node.x += dx * separation;
-                  node.y += dy * separation;
-               });
-
-               bodyB.nodes.forEach((node) => {
-                  node.x -= dx * separation;
-                  node.y -= dy * separation;
-               });
-
-               fixedIntersection = true;
+   // i need a fuction that will return whether a point is intersecting and it's closest edge.
+   type nodeInBodyResult_T = ({edge?: [node_T, node_T], intersecting: boolean})
+   
+   function nodeInBody(n: node_T, b: body_T): nodeInBodyResult_T {
+      let edge: [node_T, node_T] | undefined;
+      let minDist = Number.MAX_SAFE_INTEGER;
+      
+      for (let i = 0; i < b.nodes.length; i++) {
+         const currentEdge: [node_T, node_T] = [b.nodes[i], b.nodes[(i+1) % b.nodes.length]]
+         
+         if(nodeRightOfLineSegment(n, currentEdge[0], currentEdge[1])) {
+            const currentDistance = distFromNodeToEdge(n, currentEdge[0], currentEdge[1])
+         
+            if(minDist < currentDistance) {
+               edge = currentEdge;
+               minDist = currentDistance;
             }
          }
+      }
+      return {intersecting: minDist < Number.MAX_SAFE_INTEGER, edge}
+   }
 
-         if (!fixedIntersection) break;
+
+   // !!!
+   function fixIntersections(bodies: body_T[]) {
+
+      for (let i = 0; i < bodies.length; i++) {
+         
+         for (let j = i + 1; j < bodies.length; j++) {
+            const bodyA = bodies[i];
+            const bodyB = bodies[j];
+
+            if (bodyA == bodyB) continue;
+
+            bodyA.nodes.forEach(n => {
+               const {edge, intersecting} = nodeInBody(n, bodyB);
+               
+               if (intersecting && edge)
+                  fixIntersect(n, edge[0], edge[1])
+            });
+         }
       }
    }
-
-   function bodiesIntersecting(b1: body_T, b2: body_T) {
-      // if any node is intersecting the other body, return true.
-      return (
-         b1.nodes.some(n => nodeInBody(b2, n)) ||
-         b2.nodes.some(n => nodeInBody(b1, n))
-      )
+   // !!!
+   function fixIntersect(n: node_T, e1: node_T, e2: node_T){
+      
    }
 
-   function bodyCenter(body: body_T): node_T {
-      const center = body.nodes.reduce(
-         (result, node) => ({
-            x: result.x + node.x,
-            y: result.y + node.y,
-         }),
-         { x: 0, y: 0 },
-      );
-
-      return {
-         x: center.x / body.nodes.length,
-         y: center.y / body.nodes.length,
-         vx: 0,
-         vy: 0,
-      };
-   }
-
-   function nodeInBody(b: body_T, n: node_T) {
-      const ns = b.nodes
-      let intersects = 0;
-      for(let i = 0; i < ns.length; i++)
-         if (nodeRightOfLineSegment(n, ns[i], ns[(i + 1) % ns.length])) 
-            intersects++
-      return intersects % 2 == 1;
-   }
+   // function nodeInBody(b: body_T, n: node_T) {
+   //    const ns = b.nodes
+   //    let intersects = 0;
+   //    for(let i = 0; i < ns.length; i++)
+   //       if (nodeRightOfLineSegment(n, ns[i], ns[(i + 1) % ns.length])) 
+   //          intersects++
+   //    return intersects % 2 == 1;
+   // }
 
    function nodeRightOfLineSegment(p: node_T, l1: node_T, l2: node_T): boolean {
       if (p.y <= Math.min(l1.y, l2.y) || p.y >= Math.max(l1.y, l2.y))
@@ -204,13 +184,11 @@
       return p.x > l1.x + ((p.y - l1.y) * (l2.x - l1.x)) / (l2.y - l1.y);
    }
 
-   function findClosestEdge() {}
-
-   function distFromPointToLine(p: node_T, l1: node_T, l2: node_T): number {
+   function distFromNodeToEdge(e: node_T, l1: node_T, l2: node_T): number {
       const dx = l2.x - l1.x;
       const dy = l2.y - l1.y;
       return (
-         Math.abs(dx * (l1.y - p.y) - (l1.x - p.x) * dy) / Math.hypot(dx, dy)
+         Math.abs(dx * (l1.y - e.y) - (l1.x - e.x) * dy) / Math.hypot(dx, dy)
       );
    }
 
